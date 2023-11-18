@@ -37,6 +37,8 @@ app.include_router(query.router, prefix="/query")
 @app.post("/query", tags=["query"], response_class=RedirectResponse)
 async def query(request: Request):
     payload = await request.json()
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    print(payload)
     operation_type = payload.get("type")
     logId = payload.get("logId")
     if logId is None:
