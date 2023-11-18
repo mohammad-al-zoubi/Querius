@@ -19,7 +19,8 @@ def chunk_list(lst, chunk_size):
         yield lst[i:i + chunk_size]
 
 
-def generate_chunk_log_embeddings(log_file_path, output_path='log_embeddings.json'):
+def generate_chunk_log_embeddings(log_file_path, output_path_data='log_data.json',
+                                  output_path_results='log_embeddings.json'):
     """
     Generates embeddings for each logline in logfile in form of:
     {"embeddings": [
@@ -38,6 +39,7 @@ def generate_chunk_log_embeddings(log_file_path, output_path='log_embeddings.jso
     chunk_size = 5000
     log_chunks = list(chunk_list(logs, chunk_size))
 
+    log_data = {'lines': []}
     results = {'embeddings': []}
     start_time = time.time()
 
@@ -51,12 +53,16 @@ def generate_chunk_log_embeddings(log_file_path, output_path='log_embeddings.jso
         embeds = co.embed(texts=log_chunk, model=EMBEDDINGS_MODEL, input_type='search_document').embeddings
 
         for i, embed in enumerate(embeds):
-            results['embeddings'].append(
-                {'log_line': log_chunk[i], 'embedding': embed, 'id': i + chunk_id * chunk_size})
+            log_data['lines'].append(
+                {'log_line': log_chunk[i], 'id': i + chunk_id * chunk_size})
+        results['embeddings'] += embeds
 
         # Save the results to a json file after processing each chunk
-        with open(output_path, 'w', encoding='utf-8') as file:
-            json.dump(results, file, ensure_ascii=False, indent=0)
+        with open(output_path_data, 'w', encoding='utf-8') as file:
+            json.dump(log_data, file, ensure_ascii=False, indent=4)
+
+        with open(output_path_results, 'w', encoding='utf-8') as file:
+            json.dump(results, file, ensure_ascii=False, indent=4)
 
         if chunk_id == len(log_chunks) - 1:
             break
@@ -123,37 +129,29 @@ def load_embeddings(path_to_log_embeddings, mode='list'):
         data = json.load(file)
 
     if mode == 'json':
+        return data['lines']
+    elif mode == 'list':
         return data['embeddings']
 
-    log_embeddings = [[] for i in range(len(data['embeddings']))]
-    for i, embed in enumerate(data['embeddings']):
-        log_embeddings[embed['id']] = embed['embedding']
-    return log_embeddings
 
-
-def rank_results(query, log_embeddings, log_jsons):
+def rank_results(query, log_embeddings, log_jsons, index):
     """
     Ranks the results of the similarity search based on the similarity score.
     """
-    # Create a search index
-    index = hnswlib.Index(space='ip', dim=EMBEDDINGS_DIM)
-    index.init_index(max_elements=len(log_embeddings), ef_construction=512, M=64)
-    index.add_items(log_embeddings, list(range(len(log_embeddings))))
+
     query_emb = generate_query_embeddings(query)
     start = time.time()
-    doc_ids = index.knn_query(query_emb, k=1000)[0][0]
+    doc_ids = index.knn_query(query_emb, k=5000)[0][0]
     end = time.time()
     print(f"Search time: {end - start}")
 
     results = []
     for doc_id in tqdm(doc_ids, total=len(doc_ids)):
-        for log_json in log_jsons:
-            if log_json['id'] == doc_id:
-                results.append(log_json['log_line'])
-                # print(log_json['log_line'])
+        results.append(log_jsons[doc_id]['log_line'])
+
     start = time.time()
-    rerank_results = co.rerank(query=query, documents=results, top_n=20, model='rerank-multilingual-v2.0',
-                               max_chunks_per_doc=8)  # Change top_n to change the number of results returned. If top_n is not passed, all results will be returned.
+    rerank_results = co.rerank(query=query, documents=results, top_n=100, model='rerank-multilingual-v2.0',
+                               max_chunks_per_doc=1)  # Change top_n to change the number of results returned. If top_n is not passed, all results will be returned.
     end = time.time()
     print(f"Reranking time: {end - start}")
 
@@ -161,12 +159,25 @@ def rank_results(query, log_embeddings, log_jsons):
         print(result.document['text'])
 
 
+def create_search_index(log_embeddings):
+    start = time.time()
+    # Create a search index
+    index = hnswlib.Index(space='ip', dim=EMBEDDINGS_DIM)
+    index.init_index(max_elements=len(log_embeddings), ef_construction=512, M=64)
+    index.add_items(log_embeddings, list(range(len(log_embeddings))))
+    end = time.time()
+    print(f"Indexing time: {end - start}")
+    return index
+
+
 if __name__ == '__main__':
-    path_to_logs = r"C:\Users\Mohammad.Al-zoubi\Documents\projects\Querius\backend\QA\test_log_1k.out"
+    path_to_logs = r"C:\Users\Mohammad.Al-zoubi\Documents\projects\Querius\backend\QA\data\test_log_30k.out"
     output_path = r"C:\Users\Mohammad.Al-zoubi\Documents\projects\Querius\backend\QA\log_embeddings_multi_v2_3111k.json"
     query = "What error messages are there?"
 
-    generate_chunk_log_embeddings(path_to_logs, output_path)
+    # generate_chunk_log_embeddings(path_to_logs,
+    #                               output_path_data='data/log_data_multi_30k.json',
+    #                               output_path_results='data/log_embeddings_multi_30k.json')
     # generate_query_embeddings(query)
     # log_embeddings = load_embeddings(output_path)
     # log_jsons = load_embeddings(output_path, mode='json')
