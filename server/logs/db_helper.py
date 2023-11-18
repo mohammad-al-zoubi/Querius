@@ -9,7 +9,6 @@ class DBHelper:
         pass
 
     def get_log_list(self, organization):
-        print("organization: ", organization)
         if organization not in log_db:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -20,7 +19,6 @@ class DBHelper:
         return log_infos_list
 
     def get_log(self, organization, log_uuid):
-        print("organization: ", organization)
         if organization not in log_db:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
