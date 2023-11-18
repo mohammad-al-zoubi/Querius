@@ -16,7 +16,6 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
 
 def get_current_organization(token: str = Depends(oauth2_scheme)):
-
     payload = token_helper.decode_token(token)
     organization: str = payload.get("organization")
     if organization is None:
