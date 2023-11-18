@@ -134,7 +134,7 @@ class LogQA:
         return self.log_jsons[line_id]['log_line']
 
 
-if __name__ == '__main__':
+def test():
     log = LogQA()
     path = r"C:\Users\Mohammad.Al-zoubi\Documents\projects\Querius\backend\QA\data\test_log_1k.out"
     # log.preprocess_logfile(path)
