@@ -6,5 +6,5 @@ router = APIRouter()
 
 
 @router.post("", tags=["query"])
-def summarize(prompt: str):
+def summary(prompt: str):
     return {"type": "SUMMARY", "result": f"this is your summary to this prompt: {prompt}"}
