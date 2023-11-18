@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from datetime import datetime
 
 from backend.QA import generate_chunk_log_embeddings, load_embeddings, create_search_index, rerank_results, \
-    generate_chatgpt
+    generate_chatgpt, generate_claude
 
 logger = getLogger(__name__)
 
@@ -137,7 +137,8 @@ class LogQA:
     def get_logs_by_date(self,
                          start_date="Nov 09 13:11:13",
                          end_date="Nov 11 13:11:13",
-                         default_year=2023):
+                         default_year=2023,
+                         given_logs=None):
         """
         Returns all log lines in the current log file.
         Returns:
@@ -160,7 +161,9 @@ class LogQA:
             dt_object = datetime.strptime(f"{default_year} {log_line['log_line'][:15]}", "%Y " + date_format)
             timestamp = dt_object.timestamp()
             return timestamp_start <= timestamp <= timestamp_end
-        filtered_logs = list(filter(is_in_range, self.log_jsons))
+
+        logs = given_logs if given_logs else self.log_jsons
+        filtered_logs = list(filter(is_in_range, logs))
         return filtered_logs
 
     def get_logs_by_id_range(self, start_id, end_id):
@@ -170,6 +173,30 @@ class LogQA:
             log_lines [list]: list of all log lines
         """
         return self.log_jsons[start_id:end_id]
+
+    # TODO: Optimize this method
+    def get_logs_by_all_filters(self, query, start_id=None, end_id=None, start_date=None, end_date=None):
+        """
+        Returns all log lines in the current log file.
+        Returns:
+            log_lines [list]: list of all log lines
+        """
+        current_logs = self.log_jsons
+        if not start_id is None and not end_id is None:
+            current_logs = self.get_logs_by_id_range(start_id, end_id)
+        if start_date and end_date:
+            current_logs = self.get_logs_by_date(start_date, end_date, given_logs=current_logs)
+        if query:
+            current_embeddings = []
+            for i, log in enumerate(current_logs):
+                current_embeddings.append(self.log_embeddings[log['id']])
+                log['id'] = i
+            filtered_search_index = create_search_index(current_embeddings)
+            results = rerank_results(query, current_embeddings, current_logs, filtered_search_index, top_n=200)
+            current_logs = [{'log_line': result.document['text'],
+                             'id': result.document['id'],
+                             'score': result.relevance_score} for result in results]
+        return current_logs
 
     def log_search(self, query: str, top_n_lines: int) -> list:
         """
@@ -202,14 +229,37 @@ class LogQA:
         prompt = f"Question: {query}\nContext from logfile: {context}"
         return generate_chatgpt(prompt), ids
 
+    def generate_dynamic_summary(self, query, start_id=None, end_id=None, start_date=None, end_date=None, model='chatgpt'):
+        top_loglines = self.get_logs_by_all_filters(query, start_id, end_id, start_date, end_date)
+        context = "\n".join([top_logline['log_line'] for top_logline in top_loglines])
+        ids = [top_logline['id'] for top_logline in top_loglines]
+        prompt = f"Following are the most important lines from a logfile. Write a paragraph summarizing this logfile\n\nContext from logfile:\n{context}"
+
+        if model == 'chatgpt':
+            return generate_chatgpt(prompt), ids
+        else:
+            return generate_claude(prompt), ids
+
 
 if __name__ == '__main__':
     log = LogQA()
-    path = r"C:\Users\Mohammad.Al-zoubi\Documents\projects\Querius\backend\QA\data\test_log_1k.out"
+    path = r"C:\Users\Mohammad.Al-zoubi\Documents\projects\Querius\backend\QA\data\test_log_30k.out"
     # log.preprocess_logfile(path)
     log.set_session_parameters(path)
     # print(log.get_log_line_by_id(1000))
     # log.log_search('When were the root privileges removed for user avahi?', 10)
     # log.generate_llm_answer('What is most suspicious about these logs?', 50)
     # log.get_all_log_lines()
-    log.get_logs_by_date(start_date="Nov 09 13:42:49")
+    # log.get_logs_by_date(start_date="Nov 09 13:42:49")
+    # log.get_logs_by_all_filters(query='When were the root privileges removed for user avahi?',
+    #                             start_date="Nov 08 13:42:49",
+    #                             end_date="Nov 11 13:42:49",
+    #                             start_id=0,
+    #                             end_id=500)
+    log.generate_dynamic_summary(query='SSH relevant logs',
+                                 start_date="Nov 08 13:42:49",
+                                 end_date="Nov 11 13:42:49",
+                                 start_id=0,
+                                 end_id=500,
+                                 model='claude')
+
