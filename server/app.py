@@ -1,9 +1,11 @@
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
-from query import routes as query
-from authentication import routes as auth
-from utils import dummy_answer
-from logs import routes as logs
+
+from backend.QA.main import LogQA
+from server.query import routes as query
+from server.authentication import routes as auth
+from server.utils import dummy_answer
+from server.logs import routes as logs
 
 app = FastAPI()
 
@@ -36,3 +38,8 @@ def query():
 def root():
     return {"status": "up and running"}
 
+
+@app.get("/test", tags=["test"])
+def test():
+    from backend.QA.main import test
+    test()
