@@ -46,7 +46,6 @@ async def query(request: Request):
     if operation_type is not None:
         if operation_type == "query":
             sub_type = payload.get("subtype")
-
             if sub_type == "qa":
                 q = payload.get("content").get("question")
                 if q is None:
