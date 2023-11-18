@@ -1,5 +1,5 @@
 from .password_helper import PasswordHelper
-from helpers import token_helper
+from server.helpers import token_helper
 
 password_helper = PasswordHelper()
 
