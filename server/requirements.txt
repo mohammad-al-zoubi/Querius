@@ -5,3 +5,11 @@ python-dotenv==1.0.0
 python_bcrypt==0.3.2
 starlette==0.32.0.post1
 uvicorn==0.24.0.post1
+cohere==4.35
+numpy==1.25.0
+annoy==1.17.3
+pydantic
+PyYAML
+hnswlib
+openai
+tqdm
