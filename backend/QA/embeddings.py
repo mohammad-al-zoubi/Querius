@@ -46,8 +46,9 @@ def generate_chunk_log_embeddings(log_file_path, output_path_data='log_data.json
     for chunk_id, log_chunk in tqdm(enumerate(log_chunks), total=len(log_chunks)):
         # Sleep for 60 seconds to embed one chunk per minute
         elapsed_time = time.time() - start_time
-        if chunk_id != 0 and elapsed_time < 60:
-            time.sleep(60 - elapsed_time)
+        if chunk_id != 0:
+            if elapsed_time < 60:
+                time.sleep(60 - elapsed_time)
 
         start_time = time.time()
         embeds = co.embed(texts=log_chunk, model=EMBEDDINGS_MODEL, input_type='search_document').embeddings
@@ -64,8 +65,8 @@ def generate_chunk_log_embeddings(log_file_path, output_path_data='log_data.json
         with open(output_path_results, 'w', encoding='utf-8') as file:
             json.dump(results, file, ensure_ascii=False, indent=4)
 
-        if chunk_id == len(log_chunks) - 1:
-            break
+        # if chunk_id == len(log_chunks) - 1:
+        #     break
 
     return log_data, results
 

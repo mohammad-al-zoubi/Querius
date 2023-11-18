@@ -1,9 +1,11 @@
 import yaml
 import json
+import time
 import logging
 from logging import getLogger
 from pathlib import Path
 from pydantic import BaseModel
+from datetime import datetime
 
 from backend.QA import generate_chunk_log_embeddings, load_embeddings, create_search_index, rerank_results
 
@@ -89,6 +91,7 @@ class LogQA:
             'path_to_logfile': str(path_to_logfile),
             'path_to_logfile_json': str(path_to_logfile_json),
             'path_to_logfile_embeddings': str(path_to_logfile_embeddings),
+            #     TODO: add start, end time of log file, its size and length.
         }
         self.update_file_tracker()
 
@@ -108,7 +111,7 @@ class LogQA:
 
     def set_session_parameters(self, file_path):
         if file_path not in self.file_tracker:
-            raise ValueError(f'File {file_path} not found in the database. Use the mthod preprocess_logfile() to add '
+            raise ValueError(f'File {file_path} not found in the database. Use the method preprocess_logfile() to add '
                              f'this file to the database.')
         file_path = str(Path(file_path))
         self.path_to_logfile = self.file_tracker[file_path]['path_to_logfile']
@@ -132,7 +135,59 @@ class LogQA:
             raise ValueError('Session parameters not set. Use the method set_session_parameters() to set the '
                              'current logfile.')
         return self.log_jsons[line_id]['log_line']
+    def get_all_log_lines(self):
+        """
+        Returns all log lines in the current log file.
+        Returns:
+            log_lines [list]: list of all log lines
+        """
+        if self.log_jsons is None:
+            raise ValueError('Session parameters not set. Use the method set_session_parameters() to set the '
+                             'current logfile.')
+        return self.log_jsons
 
+    def get_logs_by_date(self,
+                         start_date="Nov 09 13:11:13",
+                         end_date="Nov 11 13:11:13",
+                         default_year=2023):
+        """
+        Returns all log lines in the current log file.
+        Returns:
+            log_lines [list]: list of all log lines
+        """
+
+        date_string_start = start_date
+        date_string_end = end_date
+        date_format = "%b %d %H:%M:%S"
+
+        # Convert the date string to a datetime object
+        dt_object_start = datetime.strptime(f"{default_year} {date_string_start}", "%Y " + date_format)
+        dt_object_end = datetime.strptime(f"{default_year} {date_string_end}", "%Y " + date_format)
+
+        # Convert the datetime object to a timestamp (Unix timestamp)
+        timestamp_start = dt_object_start.timestamp()
+        timestamp_end = dt_object_end.timestamp()
+
+        def is_in_range(log_line):
+            dt_object = datetime.strptime(f"{default_year} {log_line['log_line'][:15]}", "%Y " + date_format)
+            timestamp = dt_object.timestamp()
+            return timestamp_start <= timestamp <= timestamp_end
+        filtered_logs = list(filter(is_in_range, self.log_jsons))
+        return filtered_logs
+
+    def log_search(self, query: str, top_n_lines: int) -> list:
+        """
+        Searches the log file for the query and returns the top k results.
+        Args:
+            file_path [str]: name of the log file
+            query [str]: string query to search for
+            top_k_lines [int]: number of lines to return
+        """
+        results = rerank_results(query, self.log_embeddings, self.log_jsons, self.index, top_n=top_n_lines)
+        final_results = [{'logline': result.document['text'],
+                          'id': result.document['id'],
+                          'score': result.relevance_score} for result in results]
+        return final_results
 
 def test():
     log = LogQA()
@@ -141,3 +196,8 @@ def test():
     log.set_session_parameters(path)
     print(log.get_log_line_by_id(1000))
     log.log_search(path, 'When were the root privileges removed for user avahi?', 10)
+    # print(log.get_log_line_by_id(1000))
+    # log.log_search('When were the root privileges removed for user avahi?', 10)
+    # log.generate_llm_answer('What is most suspicious about these logs?', 50)
+    # log.get_all_log_lines()
+    log.get_logs_by_date(start_date="Nov 09 13:42:49")
