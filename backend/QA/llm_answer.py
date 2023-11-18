@@ -1,8 +1,16 @@
 import openai
+from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
 
 CHATGPT_API_KEY = "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"
+CLAUDE_API_KEY = "sk-ant-api03-nChVOejzxTLEAYvzSozIU54u9u3ymuBtIXZjU1sbifZQPvqmK63kT58r2mgav8v3o269WAuMccC3BC5dpNG_Yw" \
+                 "-9fZGGQAA"
 OPEN_AI_MODEL = "gpt-3.5-turbo"
+ANTHROPIC_AI_MODEL = "claude-instant-1"
 openai.api_key = CHATGPT_API_KEY
+anthropic = Anthropic(
+    # defaults to os.environ.get("ANTHROPIC_API_KEY")
+    api_key=CLAUDE_API_KEY,
+)
 
 
 def generate_chatgpt(prompt, open_ai_model=OPEN_AI_MODEL):
@@ -21,6 +29,23 @@ def generate_chatgpt(prompt, open_ai_model=OPEN_AI_MODEL):
         except:
             pass
     return messeage
+
+
+def generate_claude(prompt, model=ANTHROPIC_AI_MODEL):
+    completion = anthropic.completions.create(
+        model=model,
+        max_tokens_to_sample=300,
+        prompt=f"{HUMAN_PROMPT} {prompt}{AI_PROMPT}",
+        stream=True
+    )
+    messeage = ''
+    for i, chunk in enumerate(completion):
+        if i % 30 == 0:
+            print(chunk.completion)
+        else:
+            print(chunk.completion, end="")
+        messeage += chunk.completion
+    return completion.completion
 
 
 def generate_flan_t5(prompt):
