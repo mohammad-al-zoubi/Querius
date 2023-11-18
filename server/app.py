@@ -44,15 +44,16 @@ async def query(request: Request):
     if logId is None:
         raise HTTPException(status_code=400, detail="Missing logId field in JSON payload.")
     if operation_type is not None:
-
         if operation_type == "query":
             sub_type = payload.get("subtype")
-
             if sub_type == "qa":
                 q = payload.get("content").get("question")
                 if q is None:
                     raise HTTPException(status_code=400, detail="Missing question field in JSON payload.")
-                top_n_lines = 10
+                top_n_lines = payload.get("content").get("topNLines")
+                if top_n_lines is None:
+                    top_n_lines = 10
+                top_n_lines = max(top_n_lines, 10)
                 results = qa(q, logId, top_n_lines)
                 logs = [log for log in results.get("logs")]
                 answer = {
@@ -73,7 +74,10 @@ async def query(request: Request):
                 q = payload.get("content").get("prompt")
                 if q is None:
                     raise HTTPException(status_code=400, detail="Missing prompt field in JSON payload.")
-                top_n_lines = 10
+                top_n_lines = payload.get("content").get("topNLines")
+                if top_n_lines is None:
+                    top_n_lines = 10
+                top_n_lines = max(top_n_lines, 10)
                 results = search(q, logId, top_n_lines)
                 answer = {
                     "logId": logId,
