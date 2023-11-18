@@ -1,7 +1,7 @@
 from fastapi import Depends, HTTPException
 from starlette import status
-from authentication import oauth2_scheme
-from helpers import token_helper
+from server.authentication import oauth2_scheme
+from server.helpers import token_helper
 
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
