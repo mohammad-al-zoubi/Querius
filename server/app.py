@@ -54,14 +54,17 @@ async def query(request: Request):
                     raise HTTPException(status_code=400, detail="Missing question field in JSON payload.")
                 top_n_lines = 10
                 results = qa(q, logId, top_n_lines)
+                logs = [log for log in results.get("logs")]
                 answer = {
-                      "logId": logId,
-                      "timestamp": generate_timestamp(),
-                      "type": "response",
-                      "subtype": "qa",
-                      "content": {
+
+                    "logId": logId,
+                    "timestamp": generate_timestamp(),
+                    "type": "response",
+                    "subtype": "qa",
+                    "content": {
                         "answer": results.get("answer")
-                      }
+                    },
+                    "logs": logs
                 }
                 return answer
 
