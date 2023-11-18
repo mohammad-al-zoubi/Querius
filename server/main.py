@@ -1,23 +1,24 @@
 from fastapi import FastAPI
-from summarization import routes as summarize
-from question_answering import routes as qa
-from filtering import routes as filtering
+from query.summarization import routes as summarize
+from query.question_answering import routes as qa
+from query import routes as query
 from authentication import routes as auth
 from utils import dummy_answer
+from logs import routes as logs
 
 app = FastAPI()
 
 # uvicorn main:app --reload
 
 # include routes to the multiple services
-app.include_router(summarize.router, prefix="/summarize")
-app.include_router(qa.router, prefix="/question")
-app.include_router(filtering.router, prefix="/filter")
 app.include_router(auth.router, prefix="/auth")
+app.include_router(logs.router, prefix="/log")
+app.include_router(query.router, prefix="/query")
 
 
-@app.post("/chat")
-def chat():
+@app.post("/query")
+def query():
+
     return dummy_answer()
 
 
