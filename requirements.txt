@@ -4,3 +4,4 @@ annoy==1.17.3
 pydantic
 PyYAML
 hnswlib
+openai
