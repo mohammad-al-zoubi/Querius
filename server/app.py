@@ -10,8 +10,6 @@ from server.utils import dummy_answer
 from server.logs import routes as logs
 from server.helpers.utils import *
 
-
-
 app = FastAPI()
 
 origins = ["*"]
