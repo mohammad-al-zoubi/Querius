@@ -134,14 +134,15 @@ def load_embeddings(path_to_log_embeddings, mode='list'):
         return data['embeddings']
 
 
-def rank_results(query, log_embeddings, log_jsons, index):
+def rank_results(query, log_embeddings, log_jsons, index, top_n=10):
     """
     Ranks the results of the similarity search based on the similarity score.
     """
 
     query_emb = generate_query_embeddings(query)
     start = time.time()
-    doc_ids = index.knn_query(query_emb, k=5000)[0][0]
+    k = len(log_embeddings) if len(log_embeddings) < 5000 else 1000
+    doc_ids = index.knn_query(query_emb, k=k)[0][0]
     end = time.time()
     print(f"Search time: {end - start}")
 
@@ -150,7 +151,7 @@ def rank_results(query, log_embeddings, log_jsons, index):
         results.append(log_jsons[doc_id]['log_line'])
 
     start = time.time()
-    rerank_results = co.rerank(query=query, documents=results, top_n=100, model='rerank-multilingual-v2.0',
+    rerank_results = co.rerank(query=query, documents=results, top_n=top_n, model='rerank-multilingual-v2.0',
                                max_chunks_per_doc=1)  # Change top_n to change the number of results returned. If top_n is not passed, all results will be returned.
     end = time.time()
     print(f"Reranking time: {end - start}")
