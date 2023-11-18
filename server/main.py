@@ -18,7 +18,9 @@ app.include_router(query.router, prefix="/query")
 
 @app.post("/query")
 def query():
-
     return dummy_answer()
 
 
+@app.get("/test")
+def test():
+    return {"status": "up and running"}
