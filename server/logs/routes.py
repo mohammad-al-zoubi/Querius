@@ -10,7 +10,6 @@ router = APIRouter()
 
 @router.get("/all", tags=["logs"])
 def get_all_logs(organization: str = Depends(get_current_organization)):
-    print(organization)
     db_helper = DBHelper()
     return db_helper.get_log_list(organization)
 
