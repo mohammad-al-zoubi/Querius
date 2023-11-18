@@ -2,7 +2,7 @@ import time
 
 from fastapi import APIRouter
 from server.query import log_qa
-from server.query import generate_timestamp
+from server.helpers.utils import generate_timestamp
 
 
 # file in charge of summarization of logfiles
