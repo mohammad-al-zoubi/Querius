@@ -8,7 +8,7 @@ from .utils import *
 router = APIRouter()
 
 
-@router.post("/login")
+@router.post("/login", tags=["auth"])
 async def login(username: str = Form(...), password: str = Form(...)):
     # Check if account exists
     db_helper = DBHelper()
@@ -36,7 +36,7 @@ async def login(username: str = Form(...), password: str = Form(...)):
     return token
 
 
-@router.post("/logout")
+@router.post("/logout", tags=["auth"])
 async def logout(current_user: dict = Depends(get_current_user)):
     # Remove the token from the mock tokens database
     return {"message": "Logout successful"}

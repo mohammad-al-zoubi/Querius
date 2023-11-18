@@ -8,13 +8,13 @@ from helpers.uuid_utils import is_valid_uuid
 router = APIRouter()
 
 
-@router.get("/get_logs", tags=["logs"])
-def get_logs(organization: str = Depends(get_current_organization)):
+@router.get("/all", tags=["logs"])
+def get_all_logs(organization: str = Depends(get_current_organization)):
     db_helper = DBHelper()
     return db_helper.get_log_list(organization)
 
 
-@router.get("/get_log", tags=["logs"])
+@router.get("/{log_uuid}", tags=["logs"])
 def get_log(log_uuid: str, organization: str = Depends(get_current_organization)):
     if not is_valid_uuid(log_uuid):
         raise HTTPException(
