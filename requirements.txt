@@ -1,3 +1,6 @@
 cohere==4.35
 numpy==1.25.0
 annoy==1.17.3
+pydantic
+PyYAML
+hnswlib

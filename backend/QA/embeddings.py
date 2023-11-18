@@ -4,7 +4,7 @@ from tqdm import tqdm
 import cohere
 import hnswlib
 
-Cohere_API_KEY = "KvNeCIxL894TVk0gHXmbgjRyaHGYtAtwdBEwcx93"
+Cohere_API_KEY = "KtTaFCmgxw5EubOB3SpJo7qGSLopUv2zf4z28G7J"
 co = cohere.Client(Cohere_API_KEY)
 
 EMBEDDINGS_MODEL = "embed-multilingual-v2.0"
@@ -67,7 +67,7 @@ def generate_chunk_log_embeddings(log_file_path, output_path_data='log_data.json
         if chunk_id == len(log_chunks) - 1:
             break
 
-    return results['embeddings']
+    return log_data, results
 
 
 # TODO: Deprecated. Remove this function after testing the new one.
