@@ -26,7 +26,7 @@ async def login(username: str = Form(...), password: str = Form(...)):
         )
     # Return some tokens for auth
     organization = db_helper.get_organization(username)
-    expiration_time = datetime.utcnow() + timedelta(minutes=15)
+    expiration_time = datetime.utcnow() + timedelta(minutes=60)
     payload = {
         "username": username,
         "organization": organization,
