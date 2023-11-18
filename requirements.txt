@@ -1,6 +1,14 @@
 cohere==4.35
 numpy==1.25.0
 annoy==1.17.3
-pydantic
-PyYAML
-hnswlib
+pydantic~=2.5.1
+PyYAML~=6.0.1
+hnswlib~=0.7.0
+fastapi~=0.104.1
+starlette~=0.27.0
+pyjwt~=2.4.0
+uvicorn~=0.24.0.post1
+requests~=2.31.0
+bcrypt~=3.2.0
+yaml~=0.2.5
+tqdm~=4.65.0
