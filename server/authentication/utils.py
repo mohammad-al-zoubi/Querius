@@ -1,26 +1,16 @@
-from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer
+from .password_helper import PasswordHelper
+from helpers import token_helper
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-
-def get_current_user(token: str = Depends(oauth2_scheme)):
-    # Verify token and get user information
-    # TODO
-    # check if token is valid, if is then return infos of user
-    if True:
-        return "RS"
-    else:
-        raise HTTPException(status_code=401, detail="Invalid token")
+password_helper = PasswordHelper()
 
 
-def create_token():
-    # TODO
-    # create some tokens for auth
-    return "very useful token"
+def create_token(payload):
+    return token_helper.create_token(payload)
 
 
-def delete_token():
-    # TODO
-    # will delete token after logout
-    pass
+def get_current_user(token):
+    return token_helper.get_current_user(token)
+
+
+def compare_to_hash(password, pw_hash):
+    return password_helper.compare_to_hash(password, pw_hash)
