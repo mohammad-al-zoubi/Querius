@@ -1,5 +1,5 @@
 log_db = {
-    "R&S": {
+    "Rohde & Schwarz": {
         "19e303ce-32e3-493d-b710-d031ff162e90":
             {
                 "logId": "19e303ce-32e3-493d-b710-d031ff162e90",
