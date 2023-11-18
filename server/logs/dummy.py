@@ -38,3 +38,9 @@ log_db = {
             }
     }
 }
+
+log_file_db = {
+    "19e303ce-32e3-493d-b710-d031ff162e90": "/home/ubuntu/Querius/backend/QA/logs/final_log.out",
+    "78a99ab5-fe4d-4ede-b20b-86fa10c70d58": "/home/ubuntu/Querius/backend/QA/logs/test_log1.out",
+    "32d86298-c3d1-4524-97f6-a1bc790ae6f8": "/home/ubuntu/Querius/backend/QA/logs/test_log2.out"
+}

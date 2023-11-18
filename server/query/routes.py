@@ -1,10 +1,9 @@
-import time
 from fastapi import APIRouter
 from server.query.log_search import routes as search
 from server.query.summarization import routes as summarize
 from server.query.question_answering import routes as qa
 from server.query import log_qa
-
+from server.logs.dummy import log_file_db
 
 # Main router for querying
 router = APIRouter()
@@ -22,7 +21,8 @@ def set_session_parameters(file_path: str):
 
 
 @router.post("/get_logs_by_line_number", tags=["query"])
-def get_logs_by_line_number(line_number: int, neighbor_range: int = 0):
+def get_logs_by_line_number(logId: str, line_number: int, neighbor_range: int = 0):
+    log_qa.set_session_parameters(log_file_db.get(logId))
     line_number -= 1  # Compensate for offset
     neighbor_range = max(neighbor_range, 0)
     result = []
