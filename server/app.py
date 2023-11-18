@@ -34,7 +34,7 @@ app.include_router(logs.router, prefix="/log")
 app.include_router(query.router, prefix="/query")
 
 
-@app.post("/query", tags=["query"], response_class=RedirectResponse)
+@app.post("/query", tags=["query"])
 async def query(request: Request):
     payload = await request.json()
     print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -44,8 +44,10 @@ async def query(request: Request):
     if logId is None:
         raise HTTPException(status_code=400, detail="Missing logId field in JSON payload.")
     if operation_type is not None:
+
         if operation_type == "query":
             sub_type = payload.get("subtype")
+
             if sub_type == "qa":
                 q = payload.get("content").get("question")
                 if q is None:
