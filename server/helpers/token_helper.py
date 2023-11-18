@@ -1,9 +1,6 @@
 import jwt
-from fastapi import Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import HTTPException
 from starlette import status
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 class TokenHelper:
@@ -14,9 +11,11 @@ class TokenHelper:
         self.SECRET_KEY = os.getenv("SECRET_KEY")
 
     def create_token(self, payload):
-        return jwt.encode(payload, self.SECRET_KEY, algorithm="HS256")
+        token = jwt.encode(payload, self.SECRET_KEY, algorithm="HS256")
+        return token
 
     def decode_token(self, token):
+        print("helper: ", token)
         try:
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=["HS256"])
             return payload
@@ -42,9 +41,3 @@ class TokenHelper:
         # TODO
         # will delete token after logout
         pass
-
-    def get_current_user(self, token: str = Depends(oauth2_scheme)):
-        # Verify token and get user information
-        decoded_data = self.decode_token(token)
-        return decoded_data["username"]
-
