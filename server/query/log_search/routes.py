@@ -1,6 +1,6 @@
 import time
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from server.logs.dummy import log_file_db
 from server.query import log_qa
@@ -13,9 +13,15 @@ router = APIRouter()
 
 @router.post("", tags=["query"])
 def search(query: str, logId: str, top_n_lines: int = 1):
-    log_qa.set_session_parameters(log_file_db.get(logId))
+    try:
+        log_qa.set_session_parameters(log_file_db.get(logId))
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Something went terribly wrong! {type(e).__name__}")
     top_n_lines = max(top_n_lines, 1)
-    logs = log_qa.log_search(query, top_n_lines)
+    try:
+        logs = log_qa.log_search(query, top_n_lines)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Something went terribly wrong! {type(e).__name__}")
     logs_formated = []
     for log in logs:
         temp = {

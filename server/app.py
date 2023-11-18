@@ -106,10 +106,6 @@ async def query(request: Request):
 
                 result = summary()
                 return result
-
-
-
-
             else:
                 raise HTTPException(status_code=400, detail="Unsupported operation subtype.")
         else:
