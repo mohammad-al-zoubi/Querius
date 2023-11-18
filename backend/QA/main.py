@@ -136,8 +136,8 @@ class LogQA:
 
 def test():
     log = LogQA()
-    path = r"C:\Users\Mohammad.Al-zoubi\Documents\projects\Querius\backend\QA\data\test_log_1k.out"
-    # log.preprocess_logfile(path)
+    path = r"/home/ubuntu/Querius/backend/QA/logs"
+    log.preprocess_logfile(path)
     log.set_session_parameters(path)
-    # print(log.get_log_line_by_id(1000))
+    print(log.get_log_line_by_id(1000))
     log.log_search(path, 'When were the root privileges removed for user avahi?', 10)

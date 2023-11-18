@@ -13,4 +13,3 @@ bcrypt
 yaml
 tqdm
 python-dotenv
-python-multipart
