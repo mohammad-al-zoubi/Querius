@@ -5,6 +5,6 @@ from fastapi import APIRouter
 router = APIRouter()
 
 
-@router.post("/", tags=["summarize"])
+@router.post("", tags=["query"])
 def summarize(prompt: str):
     return {"type": "SUMMARY", "result": f"this is your summary to this prompt: {prompt}"}
