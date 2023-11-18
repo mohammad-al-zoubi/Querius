@@ -75,7 +75,7 @@ class LogQA:
         log_file_dir.mkdir(exist_ok=True)
         path_to_logfile_json = log_file_dir / f'{path_to_logfile.stem}.json'
         path_to_logfile_embeddings = log_file_dir / f'{path_to_logfile.stem}_embeddings.json'
-        # generate_chunk_log_embeddings(path_to_logfile, path_to_logfile_json, path_to_logfile_embeddings)
+        generate_chunk_log_embeddings(path_to_logfile, path_to_logfile_json, path_to_logfile_embeddings)
 
         self.file_tracker[path_to_logfile.stem] = {
             'path_to_logfile': str(path_to_logfile),
