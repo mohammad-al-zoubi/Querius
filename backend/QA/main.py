@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from datetime import datetime
 
 from backend.QA import generate_chunk_log_embeddings, load_embeddings, create_search_index, rerank_results
+from backend.QA.llm_answer import generate_chatgpt
 
 logger = getLogger(__name__)
 
@@ -188,6 +189,23 @@ class LogQA:
                           'id': result.document['id'],
                           'score': result.relevance_score} for result in results]
         return final_results
+
+    def generate_llm_answer(self, query: str, top_n_lines: int):
+        """
+        Generates an answer to the query using the Log Language Model.
+        Args:
+            query [str]: query to be answered
+            top_n_lines [int]: number of lines to use as context for the answer
+
+        Returns:
+            answer [str]: the generated answer
+            ids [list]: list of ids of the lines used as context for the answer
+        """
+        top_loglines = self.log_search(query, top_n_lines)
+        context = "\n".join([top_logline['logline'] for top_logline in top_loglines])
+        ids = [top_logline['id'] for top_logline in top_loglines]
+        prompt = f"Question: {query}\nContext from logfile: {context}"
+        return generate_chatgpt(prompt), ids
 
 def test():
     log = LogQA()
