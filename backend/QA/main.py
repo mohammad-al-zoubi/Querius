@@ -163,6 +163,14 @@ class LogQA:
         filtered_logs = list(filter(is_in_range, self.log_jsons))
         return filtered_logs
 
+    def get_logs_by_id_range(self, start_id, end_id):
+        """
+        Returns all log lines in the current log file.
+        Returns:
+            log_lines [list]: list of all log lines
+        """
+        return self.log_jsons[start_id:end_id]
+
     def log_search(self, query: str, top_n_lines: int) -> list:
         """
         Searches the log file for the query and returns the top k results.
