@@ -5,7 +5,8 @@ from logging import getLogger
 from pathlib import Path
 from pydantic import BaseModel
 
-from backend.QA import generate_chunk_log_embeddings, load_embeddings, create_search_index, rerank_results, generate_chatgpt
+from backend.QA import generate_chunk_log_embeddings, load_embeddings, create_search_index, rerank_results, \
+    generate_chatgpt
 
 logger = getLogger(__name__)
 
@@ -92,26 +93,6 @@ class LogQA:
         }
         self.update_file_tracker()
 
-    def log_search(self, query: str, top_n_lines: int) -> list:
-        """
-        Searches the log file for the query and returns the top k results.
-        Args:
-            file_path [str]: name of the log file
-            query [str]: string query to search for
-            top_k_lines [int]: number of lines to return
-        """
-        results = rerank_results(query, self.log_embeddings, self.log_jsons, self.index, top_n=top_n_lines)
-        final_results = [{'logline': result.document['text'],
-                          'id': result.document['id'],
-                          'score': result.relevance_score} for result in results]
-        return final_results
-
-    def generate_llm_answer(self, query: str, top_n_lines: int) -> list:
-        top_loglines = self.log_search(query, top_n_lines)
-        context = "\n".join([top_logline['logline'] for top_logline in top_loglines])
-        prompt = f"Question: {query}\nContext from logfile: {context}"
-        return generate_chatgpt(prompt)
-
     def set_session_parameters(self, file_path):
         if file_path not in self.file_tracker:
             raise ValueError(f'File {file_path} not found in the database. Use the mthod preprocess_logfile() to add '
@@ -139,6 +120,37 @@ class LogQA:
                              'current logfile.')
         return self.log_jsons[line_id]['log_line']
 
+    def log_search(self, query: str, top_n_lines: int) -> list:
+        """
+        Searches the log file for the query and returns the top k results.
+        Args:
+            file_path [str]: name of the log file
+            query [str]: string query to search for
+            top_k_lines [int]: number of lines to return
+        """
+        results = rerank_results(query, self.log_embeddings, self.log_jsons, self.index, top_n=top_n_lines)
+        final_results = [{'logline': result.document['text'],
+                          'id': result.document['id'],
+                          'score': result.relevance_score} for result in results]
+        return final_results
+
+    def generate_llm_answer(self, query: str, top_n_lines: int):
+        """
+        Generates an answer to the query using the Log Language Model.
+        Args:
+            query [str]: query to be answered
+            top_n_lines [int]: number of lines to use as context for the answer
+
+        Returns:
+            answer [str]: the generated answer
+            ids [list]: list of ids of the lines used as context for the answer
+        """
+        top_loglines = self.log_search(query, top_n_lines)
+        context = "\n".join([top_logline['logline'] for top_logline in top_loglines])
+        ids = [top_logline['id'] for top_logline in top_loglines]
+        prompt = f"Question: {query}\nContext from logfile: {context}"
+        return generate_chatgpt(prompt), ids
+
 
 if __name__ == '__main__':
     log = LogQA()
@@ -147,4 +159,4 @@ if __name__ == '__main__':
     log.set_session_parameters(path)
     # print(log.get_log_line_by_id(1000))
     # log.log_search('When were the root privileges removed for user avahi?', 10)
-    log.generate_llm_answer('When were the root privileges removed for user avahi?', 10)
+    log.generate_llm_answer('What is most suspicious about these logs?', 50)
