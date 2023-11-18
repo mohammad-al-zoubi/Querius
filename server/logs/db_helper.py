@@ -9,6 +9,7 @@ class DBHelper:
         pass
 
     def get_log_list(self, organization):
+        print(organization)
         if organization not in log_db:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
