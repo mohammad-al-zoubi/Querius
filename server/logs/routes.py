@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
-from helpers.auth_utils import get_current_organization
+from server.helpers.auth_utils import get_current_organization
 from .db_helper import DBHelper
-from helpers.uuid_utils import is_valid_uuid
+from server.helpers.uuid_utils import is_valid_uuid
 
 router = APIRouter()
 
