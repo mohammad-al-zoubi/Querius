@@ -5,7 +5,7 @@ from logging import getLogger
 from pathlib import Path
 from pydantic import BaseModel
 
-from backend.QA import generate_chunk_log_embeddings, load_embeddings, create_search_index, rerank_results
+from backend.QA import generate_chunk_log_embeddings, load_embeddings, create_search_index, rerank_results, generate_chatgpt
 
 logger = getLogger(__name__)
 
@@ -92,7 +92,7 @@ class LogQA:
         }
         self.update_file_tracker()
 
-    def log_search(self, file_path: str, query: str, top_n_lines: int) -> list:
+    def log_search(self, query: str, top_n_lines: int) -> list:
         """
         Searches the log file for the query and returns the top k results.
         Args:
@@ -105,6 +105,12 @@ class LogQA:
                           'id': result.document['id'],
                           'score': result.relevance_score} for result in results]
         return final_results
+
+    def generate_llm_answer(self, query: str, top_n_lines: int) -> list:
+        top_loglines = self.log_search(query, top_n_lines)
+        context = "\n".join([top_logline['logline'] for top_logline in top_loglines])
+        prompt = f"Question: {query}\nContext from logfile: {context}"
+        return generate_chatgpt(prompt)
 
     def set_session_parameters(self, file_path):
         if file_path not in self.file_tracker:
@@ -140,4 +146,5 @@ if __name__ == '__main__':
     # log.preprocess_logfile(path)
     log.set_session_parameters(path)
     # print(log.get_log_line_by_id(1000))
-    log.log_search(path, 'When were the root privileges removed for user avahi?', 10)
+    # log.log_search('When were the root privileges removed for user avahi?', 10)
+    log.generate_llm_answer('When were the root privileges removed for user avahi?', 10)

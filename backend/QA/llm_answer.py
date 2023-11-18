@@ -14,9 +14,12 @@ def generate_chatgpt(prompt, open_ai_model=OPEN_AI_MODEL):
     # generated_answer = response['choices'][0]['message']['content']
     messeage = ''
     for chunk in response:
-        generated_answer = chunk['choices'][0]['delta']['content']
-        print(generated_answer, end="")
-        messeage += generated_answer
+        try:
+            generated_answer = chunk['choices'][0]['delta']['content']
+            print(generated_answer, end="")
+            messeage += generated_answer
+        except:
+            pass
     return messeage
 
 
