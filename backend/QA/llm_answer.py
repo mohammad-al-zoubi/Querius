@@ -23,5 +23,9 @@ def generate_chatgpt(prompt, open_ai_model=OPEN_AI_MODEL):
     return messeage
 
 
+def generate_flan_t5(prompt):
+    ...
+
+
 if __name__ == '__main__':
     generate_chatgpt('I am your brain. I produce your thoughts. I love you')
