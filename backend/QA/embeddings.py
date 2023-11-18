@@ -134,7 +134,7 @@ def load_embeddings(path_to_log_embeddings, mode='list'):
         return data['embeddings']
 
 
-def rank_results(query, log_embeddings, log_jsons, index, top_n=10):
+def rerank_results(query, log_embeddings, log_jsons, index, top_n=10):
     """
     Ranks the results of the similarity search based on the similarity score.
     """
@@ -148,7 +148,7 @@ def rank_results(query, log_embeddings, log_jsons, index, top_n=10):
 
     results = []
     for doc_id in tqdm(doc_ids, total=len(doc_ids)):
-        results.append(log_jsons[doc_id]['log_line'])
+        results.append({"text": log_jsons[doc_id]['log_line'], "id": int(doc_id)})
 
     start = time.time()
     rerank_results = co.rerank(query=query, documents=results, top_n=top_n, model='rerank-multilingual-v2.0',
@@ -158,6 +158,7 @@ def rank_results(query, log_embeddings, log_jsons, index, top_n=10):
 
     for result in rerank_results:
         print(result.document['text'])
+    return rerank_results
 
 
 def create_search_index(log_embeddings):

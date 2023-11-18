@@ -5,7 +5,7 @@ from logging import getLogger
 from pathlib import Path
 from pydantic import BaseModel
 
-from backend.QA import generate_chunk_log_embeddings, load_embeddings, create_search_index, rank_results
+from backend.QA import generate_chunk_log_embeddings, load_embeddings, create_search_index, rerank_results
 
 logger = getLogger(__name__)
 
@@ -100,7 +100,11 @@ class LogQA:
             query [str]: string query to search for
             top_k_lines [int]: number of lines to return
         """
-        rank_results(query, self.log_embeddings, self.log_jsons, self.index, top_n=top_n_lines)
+        results = rerank_results(query, self.log_embeddings, self.log_jsons, self.index, top_n=top_n_lines)
+        final_results = [{'logline': result.document['text'],
+                          'id': result.document['id'],
+                          'score': result.relevance_score} for result in results]
+        return final_results
 
     def set_session_parameters(self, file_path):
         if file_path not in self.file_tracker:
