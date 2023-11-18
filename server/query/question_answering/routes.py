@@ -5,6 +5,6 @@ from fastapi import APIRouter
 router = APIRouter()
 
 
-@router.get("/", tags=["qa"])
+@router.post("/", tags=["qa"])
 def question_answering(question: str):
-    return {"your question": question, "your answer": "abc"}
+    return {"type": "Q_AND_A", "result": f"your answer to this question '{question}'"}

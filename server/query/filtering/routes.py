@@ -5,6 +5,6 @@ from fastapi import APIRouter
 router = APIRouter()
 
 
-@router.get("/", tags=["filtering"])
+@router.post("/", tags=["filtering"])
 def filter_logs(query: str):
-    return {"your query": query, "your result": "abc"}
+    return {"type": "LOG_SEARCH", "result": {"log 1": "1", "log 2": "1", "log 3": "1", "query was": query}}
