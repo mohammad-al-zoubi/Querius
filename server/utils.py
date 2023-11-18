@@ -32,3 +32,4 @@ def dummy_answer():
         "isProcessed": is_procesed,
         "size": size
     }
+    return payload
