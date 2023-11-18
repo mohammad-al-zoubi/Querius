@@ -26,14 +26,14 @@ async def login(username: str = Form(...), password: str = Form(...)):
         )
     # Return some tokens for auth
     organization = db_helper.get_organization(username)
-    expiration_time = datetime.utcnow() + timedelta(minutes=60)
+    expiration_time = datetime.utcnow() + timedelta(minutes=525600)
     payload = {
         "username": username,
         "organization": organization,
         "exp": expiration_time,
     }
-
-    return create_token(payload)
+    token = create_token(payload)
+    return token
 
 
 @router.post("/logout")
