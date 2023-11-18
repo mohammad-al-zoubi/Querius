@@ -136,7 +136,7 @@ class LogQA:
 
 def test():
     log = LogQA()
-    path = r"/home/ubuntu/Querius/backend/QA/logs/test_log1.out"
+    path = r"/home/ubuntu/Querius/backend/QA/logs/test_log2.out"
     log.preprocess_logfile(path)
     log.set_session_parameters(path)
     print(log.get_log_line_by_id(1000))
