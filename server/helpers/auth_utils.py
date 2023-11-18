@@ -11,12 +11,12 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
         )
     return username
 
 
 def get_current_organization(token: str = Depends(oauth2_scheme)):
+
     payload = token_helper.decode_token(token)
     organization: str = payload.get("organization")
     if organization is None:
