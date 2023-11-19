@@ -98,6 +98,8 @@ async def query(request: Request):
                 if lineTo is None:
                     raise HTTPException(status_code=400, detail="Missing lineTo field in JSON payload.")
                 result = summary(logId, q, lineFrom, lineTo, timeFrom, timeTo)
+                print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                print("RETURNED")
                 return result
             else:
                 raise HTTPException(status_code=400, detail="Unsupported operation subtype.")
