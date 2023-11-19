@@ -4,6 +4,9 @@ from starlette import status
 
 
 class TokenHelper:
+    """
+    class in chage of helping with token related computations
+    """
     def __init__(self):
         import os
         from dotenv import load_dotenv
