@@ -7,8 +7,8 @@ from pathlib import Path
 from pydantic import BaseModel
 from datetime import datetime
 
-from backend.QA import generate_chunk_log_embeddings, load_embeddings, create_search_index, rerank_results
-from backend.QA.llm_answer import generate_chatgpt
+from backend.QA import generate_chunk_log_embeddings, load_embeddings, create_search_index, rerank_results, \
+    generate_chatgpt, generate_claude
 
 logger = getLogger(__name__)
 
@@ -96,20 +96,6 @@ class LogQA:
         }
         self.update_file_tracker()
 
-    def log_search(self, file_path: str, query: str, top_n_lines: int) -> list:
-        """
-        Searches the log file for the query and returns the top k results.
-        Args:
-            file_path [str]: name of the log file
-            query [str]: string query to search for
-            top_k_lines [int]: number of lines to return
-        """
-        results = rerank_results(query, self.log_embeddings, self.log_jsons, self.index, top_n=top_n_lines)
-        final_results = [{'logline': result.document['text'],
-                          'id': result.document['id'],
-                          'score': result.relevance_score} for result in results]
-        return final_results
-
     def set_session_parameters(self, file_path):
         if file_path not in self.file_tracker:
             raise ValueError(f'File {file_path} not found in the database. Use the method preprocess_logfile() to add '
@@ -136,6 +122,7 @@ class LogQA:
             raise ValueError('Session parameters not set. Use the method set_session_parameters() to set the '
                              'current logfile.')
         return self.log_jsons[line_id]['log_line']
+
     def get_all_log_lines(self):
         """
         Returns all log lines in the current log file.
@@ -150,7 +137,8 @@ class LogQA:
     def get_logs_by_date(self,
                          start_date="Nov 09 13:11:13",
                          end_date="Nov 11 13:11:13",
-                         default_year=2023):
+                         default_year=2023,
+                         given_logs=None):
         """
         Returns all log lines in the current log file.
         Returns:
@@ -173,8 +161,42 @@ class LogQA:
             dt_object = datetime.strptime(f"{default_year} {log_line['log_line'][:15]}", "%Y " + date_format)
             timestamp = dt_object.timestamp()
             return timestamp_start <= timestamp <= timestamp_end
-        filtered_logs = list(filter(is_in_range, self.log_jsons))
+
+        logs = given_logs if given_logs else self.log_jsons
+        filtered_logs = list(filter(is_in_range, logs))
         return filtered_logs
+
+    def get_logs_by_id_range(self, start_id, end_id):
+        """
+        Returns all log lines in the current log file.
+        Returns:
+            log_lines [list]: list of all log lines
+        """
+        return self.log_jsons[start_id:end_id]
+
+    # TODO: Optimize this method
+    def get_logs_by_all_filters(self, query, start_id=None, end_id=None, start_date=None, end_date=None):
+        """
+        Returns all log lines in the current log file.
+        Returns:
+            log_lines [list]: list of all log lines
+        """
+        current_logs = self.log_jsons
+        if not start_id is None and not end_id is None:
+            current_logs = self.get_logs_by_id_range(start_id, end_id)
+        if start_date and end_date:
+            current_logs = self.get_logs_by_date(start_date, end_date, given_logs=current_logs)
+        if query:
+            current_embeddings = []
+            for i, log in enumerate(current_logs):
+                current_embeddings.append(self.log_embeddings[log['id']])
+                log['id'] = i
+            filtered_search_index = create_search_index(current_embeddings)
+            results = rerank_results(query, current_embeddings, current_logs, filtered_search_index, top_n=200)
+            current_logs = [{'log_line': result.document['text'],
+                             'id': result.document['id'],
+                             'score': result.relevance_score} for result in results]
+        return current_logs
 
     def log_search(self, query: str, top_n_lines: int) -> list:
         """
@@ -207,15 +229,18 @@ class LogQA:
         prompt = f"Question: {query}\nContext from logfile: {context}"
         return generate_chatgpt(prompt), ids
 
+    def generate_dynamic_summary(self, query, start_id=None, end_id=None, start_date=None, end_date=None, model='chatgpt'):
+        top_loglines = self.get_logs_by_all_filters(query, start_id, end_id, start_date, end_date)
+        context = "\n".join([top_logline['log_line'] for top_logline in top_loglines])
+        ids = [top_logline['id'] for top_logline in top_loglines]
+        prompt = f"Following are the most important lines from a logfile. Write a paragraph summarizing this logfile\n\nContext from logfile:\n{context}"
+
+        if model == 'chatgpt':
+            return generate_chatgpt(prompt), ids
+        else:
+            return generate_claude(prompt), ids
+
 def test():
     log = LogQA()
     path = r"/home/ubuntu/Querius/backend/QA/logs/final_log.out"
     log.preprocess_logfile(path)
-    log.set_session_parameters(path)
-    print(log.get_log_line_by_id(1000))
-    log.log_search(path, 'When were the root privileges removed for user avahi?', 10)
-    # print(log.get_log_line_by_id(1000))
-    # log.log_search('When were the root privileges removed for user avahi?', 10)
-    # log.generate_llm_answer('What is most suspicious about these logs?', 50)
-    # log.get_all_log_lines()
-    log.get_logs_by_date(start_date="Nov 09 13:42:49")
