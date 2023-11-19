@@ -195,7 +195,7 @@ class LogQA:
                 current_embeddings.append(self.log_embeddings[log['id']])
                 log['id'] = i
             filtered_search_index = create_search_index(current_embeddings)
-            results = rerank_results(query, current_embeddings, current_logs, filtered_search_index, top_n=45)
+            results = rerank_results(query, current_embeddings, current_logs, filtered_search_index, top_n=200)
             current_logs = [{'log_line': result.document['text'],
                              'id': result.document['id'],
                              'score': result.relevance_score} for result in results]
@@ -232,7 +232,8 @@ class LogQA:
         prompt = f"Question: {query}\nContext from logfile: {context}"
         return generate_chatgpt(prompt), ids
 
-    def generate_dynamic_summary(self, query, start_id=None, end_id=None, start_date=None, end_date=None, model='claude'):
+    def generate_dynamic_summary(self, query, start_id=None, end_id=None, start_date=None, end_date=None,
+                                 model='claude'):
         top_loglines = self.get_logs_by_all_filters(query, start_id, end_id, start_date, end_date)
         context = "\n".join([top_logline['log_line'] for top_logline in top_loglines])
         ids = [top_logline['id'] for top_logline in top_loglines]
@@ -243,10 +244,13 @@ class LogQA:
         else:
             return generate_claude(prompt), ids
 
+    def generate_static_summary(self):
+        ...
+
 
 if __name__ == '__main__':
     log = LogQA()
-    path = r"C:\Users\Mohammad.Al-zoubi\Documents\projects\Querius\backend\QA\data\test_log_30k.out"
+    path = r"C:\Users\Mohammad.Al-zoubi\Documents\projects\Querius\backend\QA\data\test_log_1k.out"
     # log.preprocess_logfile(path)
     log.set_session_parameters(path)
     # print(log.get_log_line_by_id(1000))
@@ -259,10 +263,9 @@ if __name__ == '__main__':
     #                             end_date="Nov 11 13:42:49",
     #                             start_id=0,
     #                             end_id=500)
-    log.generate_dynamic_summary(query='SSH relevant logs',
+    log.generate_dynamic_summary(query='What are the errors?',
                                  start_date="Nov 08 13:42:49",
                                  end_date="Nov 11 13:42:49",
-                                 start_id=0,
-                                 end_id=25000,
-                                 model='chatgpt')
-
+                                 start_id=1,
+                                 end_id=501,
+                                 model='claude')
