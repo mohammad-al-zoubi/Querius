@@ -2,11 +2,10 @@ from fastapi import APIRouter, HTTPException
 from starlette import status
 
 from server.helpers.uuid_utils import is_valid_uuid
+from server.query import log_qa_dict
 from server.query.log_search import routes as search
 from server.query.summarization import routes as summarize
 from server.query.question_answering import routes as qa
-from server.query import log_qa
-from server.decorators import context_required
 
 from server.utils import context_is_set
 
@@ -17,7 +16,7 @@ router.include_router(summarize.router, prefix="/summary")
 router.include_router(qa.router, prefix="/qa")
 router.include_router(search.router, prefix="/search")
 
-
+"""
 @router.post("/set_parameters", tags=["query"])
 def set_session_parameters(file_path: str):
     try:
@@ -28,22 +27,17 @@ def set_session_parameters(file_path: str):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Something went terribly wrong!")
 
     return {"result": "parameters set successfully"}
+"""
 
 
 @router.post("/get_logs_by_line_number", tags=["query"])
-@context_required
 def get_logs_by_line_number(logId: str, line_number: int, neighbor_range: int = 0):
     if not is_valid_uuid(logId):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="The id provided is not valid",
         )
-    if not context_is_set():
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="You need to set the context before using this feature",
-        )
-
+    log_qa = log_qa_dict.get(logId)
     line_number -= 1  # Compensate for offset
     neighbor_range = max(neighbor_range, 0)
     result = []

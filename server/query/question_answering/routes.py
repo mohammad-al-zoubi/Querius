@@ -1,12 +1,6 @@
-import time
-
 from fastapi import APIRouter, HTTPException
-
-from server.decorators import context_required
-from server.logs.dummy import log_file_db
-from server.query import log_qa
 from server.helpers.utils import generate_timestamp
-
+from server.query import log_qa_dict
 
 # file in charge of summarization of logfiles
 
@@ -14,9 +8,9 @@ router = APIRouter()
 
 
 @router.post("", tags=["query"])
-@context_required
 def qa(query: str, logId: str, top_n_lines: int = 1):
     top_n_lines = max(top_n_lines, 1)
+    log_qa = log_qa_dict.get(logId)
     try:
         answer, ids = log_qa.generate_llm_answer(query, top_n_lines)
     except Exception as e:

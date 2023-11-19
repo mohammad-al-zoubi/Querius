@@ -7,7 +7,6 @@ from server.authentication import routes as auth
 from server.query.log_search.routes import search
 from server.query.question_answering.routes import qa
 from server.query.summarization.routes import summary
-from server.utils import dummy_answer
 from server.logs import routes as logs
 from server.helpers.utils import *
 

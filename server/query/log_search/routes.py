@@ -1,12 +1,7 @@
-import time
-
 from fastapi import APIRouter, HTTPException
 from starlette import status
-
-from server.decorators import context_required
-from server.logs.dummy import log_file_db
-from server.query import log_qa
 from server.helpers.utils import generate_timestamp
+from server.query import log_qa_dict
 
 # file in charge of summarization of logfiles
 
@@ -14,10 +9,10 @@ router = APIRouter()
 
 
 @router.post("", tags=["query"])
-@context_required
 def search(query: str, logId: str, top_n_lines: int = 1):
     top_n_lines = max(top_n_lines, 1)
     try:
+        log_qa = log_qa_dict.get(logId)
         logs = log_qa.log_search(query, top_n_lines)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Something went terribly wrong!")
