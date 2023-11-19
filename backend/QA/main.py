@@ -244,11 +244,37 @@ class LogQA:
         else:
             return generate_claude(prompt), ids
 
+    def reduce_resolution(self, log_jsons, step_size):
+        """
+        Reduces the resolution of the log file by a factor of step_size.
+        Args:
+            log_jsons [list]: list of log lines
+            step_size [int]: step size to use for reducing the resolution
+        """
+        reduced_lines = [line for i, line in enumerate(log_jsons) if i % step_size == 0]
+        return reduced_lines
+
     def generate_static_summary(self):
         ...
 
-
-def test():
+if __name__=='__main__':
     log = LogQA()
     path = r"/home/leo/Desktop/2/Querius/backend/QA/logs/test_log2.out"
     log.preprocess_logfile(path)
+    # log.set_session_parameters(path)
+    # print(log.get_log_line_by_id(1000))
+    # log.log_search('When were the root privileges removed for user avahi?', 10)
+    # log.generate_llm_answer('What is most suspicious about these logs?', 50)
+    # log.get_all_log_lines()
+    # log.get_logs_by_date(start_date="Nov 09 13:42:49")
+    # log.get_logs_by_all_filters(query='When were the root privileges removed for user avahi?',
+    #                             start_date="Nov 08 13:42:49",
+    #                             end_date="Nov 11 13:42:49",
+    #                             start_id=0,
+    #                             end_id=500)
+    # log.generate_dynamic_summary(query='What are the errors?',
+    #                              start_date="Nov 08 13:42:49",
+    #                              end_date="Nov 11 13:42:49",
+    #                              start_id=1,
+    #                              end_id=501,
+    #                              model='claude')
