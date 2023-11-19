@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException
 from starlette import status
-
 from server.helpers.uuid_utils import is_valid_uuid
 from server.query import log_qa_dict
 from server.query.log_search import routes as search
@@ -13,6 +12,7 @@ router = APIRouter()
 router.include_router(summarize.router, prefix="/summary")
 router.include_router(qa.router, prefix="/qa")
 router.include_router(search.router, prefix="/search")
+
 
 @router.post("/get_logs_by_line_number", tags=["query"])
 def get_logs_by_line_number(logId: str, line_number: int, neighbor_range: int = 0):

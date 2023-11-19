@@ -1,6 +1,5 @@
 from fastapi import HTTPException
 from starlette import status
-
 from .dummy import log_db
 
 
