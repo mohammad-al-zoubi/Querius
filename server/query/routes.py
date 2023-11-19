@@ -14,20 +14,6 @@ router.include_router(summarize.router, prefix="/summary")
 router.include_router(qa.router, prefix="/qa")
 router.include_router(search.router, prefix="/search")
 
-"""
-@router.post("/set_parameters", tags=["query"])
-def set_session_parameters(file_path: str):
-    try:
-        log_qa.update_file_tracker()
-        log_qa.set_session_parameters(file_path)
-    except Exception as e:
-        print(str(e))
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Something went terribly wrong!")
-
-    return {"result": "parameters set successfully"}
-"""
-
-
 @router.post("/get_logs_by_line_number", tags=["query"])
 def get_logs_by_line_number(logId: str, line_number: int, neighbor_range: int = 0):
     if not is_valid_uuid(logId):

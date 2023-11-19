@@ -15,7 +15,6 @@ class TokenHelper:
         return token
 
     def decode_token(self, token):
-        print("helper: ", token)
         try:
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=["HS256"])
             return payload
@@ -36,8 +35,3 @@ class TokenHelper:
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Something went wrong.",
             )
-
-    def delete_token(self):
-        # TODO
-        # will delete token after logout
-        pass

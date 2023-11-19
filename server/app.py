@@ -96,8 +96,12 @@ async def query(request: Request):
                 lineTo = payload.get("content").get("timeTo")
                 if lineTo is None:
                     raise HTTPException(status_code=400, detail="Missing lineTo field in JSON payload.")
-                answer, ids = summary(logId, q, lineFrom, lineTo, timeFrom, timeTo)
-                print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                try:
+                    answer, ids = summary(logId, q, lineFrom, lineTo, timeFrom, timeTo)
+                except:
+                    raise HTTPException(status_code=500, detail="Something went terribly wrong.")
+                print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+                      "++++++++++++++")
                 print("RETURNED")
                 result = {
                     "logId": logId,
