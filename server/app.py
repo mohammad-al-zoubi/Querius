@@ -1,5 +1,7 @@
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Request, HTTPException
+
+from server.decorators import context_required
 from server.query import routes as query
 from server.authentication import routes as auth
 from server.query.log_search.routes import search
@@ -30,6 +32,7 @@ app.include_router(query.router, prefix="/query")
 
 
 @app.post("/query", tags=["query"])
+@context_required
 async def query(request: Request):
     payload = await request.json()
     operation_type = payload.get("type")
