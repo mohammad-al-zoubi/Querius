@@ -248,24 +248,7 @@ class LogQA:
         ...
 
 
-if __name__ == '__main__':
+def test():
     log = LogQA()
-    path = r"/home/ubuntu/Querius/backend/QA/logs/final_log.out"
+    path = r"/home/leo/Desktop/2/Querius/backend/QA/logs/test_log2.out"
     log.preprocess_logfile(path)
-    # log.set_session_parameters(path)
-    # print(log.get_log_line_by_id(1000))
-    # log.log_search('When were the root privileges removed for user avahi?', 10)
-    # log.generate_llm_answer('What is most suspicious about these logs?', 50)
-    # log.get_all_log_lines()
-    # log.get_logs_by_date(start_date="Nov 09 13:42:49")
-    # log.get_logs_by_all_filters(query='When were the root privileges removed for user avahi?',
-    #                             start_date="Nov 08 13:42:49",
-    #                             end_date="Nov 11 13:42:49",
-    #                             start_id=0,
-    #                             end_id=500)
-    # log.generate_dynamic_summary(query='What are the errors?',
-    #                              start_date="Nov 08 13:42:49",
-    #                              end_date="Nov 11 13:42:49",
-    #                              start_id=1,
-    #                              end_id=501,
-    #                              model='claude')
