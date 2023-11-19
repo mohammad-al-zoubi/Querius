@@ -38,17 +38,17 @@ def generate_claude(prompt, model=ANTHROPIC_AI_MODEL):
         prompt=f"{HUMAN_PROMPT} {prompt}{AI_PROMPT}",
         stream=True
     )
-    messeage = ''
+    message = ''
     for i, chunk in enumerate(completion):
         try:
             if i % 30 == 0:
                 print(chunk.completion)
             else:
                 print(chunk.completion, end="")
-            messeage += chunk.completion
+            message += chunk.completion
         except:
             pass
-    return messeage
+    return message
 
 
 def generate_flan_t5(prompt):
