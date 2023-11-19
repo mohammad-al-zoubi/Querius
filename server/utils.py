@@ -1,7 +1,6 @@
 import uuid
 import random
 import string
-from server.query import log_qa
 
 
 def generate_random_string(length: int):
@@ -34,12 +33,3 @@ def dummy_answer():
         "size": size
     }
     return payload
-
-
-def context_is_set():
-    return (
-        log_qa is not None and
-        log_qa.path_to_logfile is not None and
-        log_qa.path_to_logfile_json is not None and
-        log_qa.path_to_logfile_embeddings is not None
-    )

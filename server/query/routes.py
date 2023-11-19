@@ -7,8 +7,6 @@ from server.query.log_search import routes as search
 from server.query.summarization import routes as summarize
 from server.query.question_answering import routes as qa
 
-from server.utils import context_is_set
-
 # Main router for querying
 router = APIRouter()
 
