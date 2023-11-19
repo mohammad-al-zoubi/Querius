@@ -6,7 +6,9 @@ from server.query.log_search import routes as search
 from server.query.summarization import routes as summarize
 from server.query.question_answering import routes as qa
 from server.query import log_qa
-from server.logs.dummy import log_file_db
+from server.decorators import context_required
+
+from server.utils import context_is_set
 
 # Main router for querying
 router = APIRouter()
@@ -18,19 +20,29 @@ router.include_router(search.router, prefix="/search")
 
 @router.post("/set_parameters", tags=["query"])
 def set_session_parameters(file_path: str):
-    log_qa.update_file_tracker()
-    log_qa.set_session_parameters(file_path)
+    try:
+        log_qa.update_file_tracker()
+        log_qa.set_session_parameters(file_path)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Something went terribly wrong!")
+
     return {"result": "parameters set successfully"}
 
 
 @router.post("/get_logs_by_line_number", tags=["query"])
+@context_required
 def get_logs_by_line_number(logId: str, line_number: int, neighbor_range: int = 0):
     if not is_valid_uuid(logId):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="The id provided is not valid",
         )
-    log_qa.set_session_parameters(log_file_db.get(logId))
+    if not context_is_set():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You need to set the context before using this feature",
+        )
+
     line_number -= 1  # Compensate for offset
     neighbor_range = max(neighbor_range, 0)
     result = []
