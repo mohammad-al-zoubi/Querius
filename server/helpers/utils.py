@@ -10,6 +10,7 @@ def generate_timestamp():
 
 def timestamp_to_custom_format(timestamp):
     # Assuming the timestamp is in seconds
+    timestamp /= 1000
     dt_object = datetime.fromtimestamp(timestamp)
 
     # Formatting the date and time in the desired format
