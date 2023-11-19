@@ -4,6 +4,9 @@ from .dummy import log_db
 
 
 class DBHelper:
+    """
+        class in charge of helping with the interaction to the log database
+    """
     def __init__(self):
         pass
 
