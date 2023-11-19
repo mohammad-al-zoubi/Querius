@@ -195,7 +195,7 @@ class LogQA:
                 current_embeddings.append(self.log_embeddings[log['id']])
                 log['id'] = i
             filtered_search_index = create_search_index(current_embeddings)
-            results = rerank_results(query, current_embeddings, current_logs, filtered_search_index, top_n=200)
+            results = rerank_results(query, current_embeddings, current_logs, filtered_search_index, top_n=45)
             current_logs = [{'log_line': result.document['text'],
                              'id': result.document['id'],
                              'score': result.relevance_score} for result in results]
@@ -250,7 +250,7 @@ class LogQA:
 
 if __name__ == '__main__':
     log = LogQA()
-    path = r"C:\Users\Mohammad.Al-zoubi\Documents\projects\Querius\backend\QA\data\final_log.out"
+    path = r"/home/ubuntu/Querius/backend/QA/logs/final_log.out"
     log.preprocess_logfile(path)
     # log.set_session_parameters(path)
     # print(log.get_log_line_by_id(1000))

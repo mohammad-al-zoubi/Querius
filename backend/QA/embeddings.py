@@ -157,8 +157,8 @@ def rerank_results(query, log_embeddings, log_jsons, index, top_n=10):
     end = time.time()
     print(f"Reranking time: {end - start}")
 
-    # for result in rerank_results:
-    #     print(result.document['text'])
+    for result in rerank_results:
+        print(result.document['text'])
     return rerank_results
 
 
