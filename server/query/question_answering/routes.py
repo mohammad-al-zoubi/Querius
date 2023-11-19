@@ -18,7 +18,7 @@ def qa(query: str, logId: str, top_n_lines: int = 1):
     try:
         answer, ids = log_qa.generate_llm_answer(query, top_n_lines)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Something went terribly wrong!")
+        raise HTTPException(status_code=400, detail=f"Something went terribly wrong! {str(e)}")
     logs = []
     for i in ids:
         try:
