@@ -55,9 +55,9 @@ async def query(request: Request):
                     "type": "response",
                     "subtype": "qa",
                     "content": {
-                        "answer": results.get("answer")
+                        "answer": results.get("answer"),
+                        "lines": logs
                     },
-                    "logs": logs
                 }
                 return answer
 
