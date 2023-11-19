@@ -109,7 +109,7 @@ async def query(request: Request):
                     "type": "reponse",
                     "subtype": "summary",
                     "content": {
-                        "answer": answer
+                        "summary": answer
                     }
                 }
                 return result
