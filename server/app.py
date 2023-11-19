@@ -32,8 +32,6 @@ app.include_router(query.router, prefix="/query")
 @app.post("/query", tags=["query"])
 async def query(request: Request):
     payload = await request.json()
-    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-    print(payload)
     operation_type = payload.get("type")
     logId = payload.get("logId")
     if logId is None:
@@ -52,7 +50,6 @@ async def query(request: Request):
                 results = qa(q, logId, top_n_lines)
                 logs = [log for log in results.get("logs")]
                 answer = {
-
                     "logId": logId,
                     "timestamp": generate_timestamp(),
                     "type": "response",
@@ -63,7 +60,6 @@ async def query(request: Request):
                     "logs": logs
                 }
                 return answer
-
 
             elif sub_type == "search":
                 q = payload.get("content").get("prompt")
@@ -82,6 +78,7 @@ async def query(request: Request):
                     "content": results.get("LogLine")
                 }
                 return answer
+
             elif sub_type == "summary":
                 q = payload.get("content").get("prompt")
                 if q is None:
@@ -98,7 +95,6 @@ async def query(request: Request):
                 lineTo = payload.get("content").get("timeTo")
                 if lineTo is None:
                     raise HTTPException(status_code=400, detail="Missing lineTo field in JSON payload.")
-
                 result = summary()
                 return result
             else:

@@ -240,6 +240,7 @@ class LogQA:
         else:
             return generate_claude(prompt), ids
 
+
 def test():
     log = LogQA()
     path = r"/home/ubuntu/Querius/backend/QA/logs/final_log.out"
