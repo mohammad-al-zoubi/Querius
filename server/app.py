@@ -107,7 +107,7 @@ async def query(request: Request):
                 result = {
                     "logId": logId,
                     "timestamp": generate_timestamp(),
-                    "type": "reponse",
+                    "type": "response",
                     "subtype": "summary",
                     "content": {
                         "summary": answer
