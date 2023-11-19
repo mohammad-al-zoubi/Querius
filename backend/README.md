@@ -116,12 +116,12 @@ Generates a dynamic summary based on specified filters and model. One could use 
 4. **Perform Queries:**
    ```python
    # Example: Search for logs containing the word "error"
-   query_result = log_qa.log_search("Lines with SSH access attempts", top_n_lines=5)
+   query_result = log_qa.log_search("Lines with SSH access attempts", top_n_lines=30)
    ```
 
    ```python
    # Example: Generate a dynamic summary based on filters
-   summary, context_ids = log_qa.generate_dynamic_summary("Error messages", start_id=10, end_id=20, start_date="Nov 08 13:42:49", end_date="Nov 11 13:42:49")
+   summary, context_ids = log_qa.generate_dynamic_summary("Error messages", start_id=10, end_id=2500, start_date="Nov 08 13:42:49", end_date="Nov 11 13:42:49")
    ```
 
 5. **Generate Answers:**
