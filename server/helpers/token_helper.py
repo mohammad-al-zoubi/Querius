@@ -5,7 +5,7 @@ from starlette import status
 
 class TokenHelper:
     """
-    class in chage of helping with token related computations
+    class in charge of helping with token related computations
     """
     def __init__(self):
         import os
