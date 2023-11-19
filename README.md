@@ -3,9 +3,11 @@
 
 ![QA Mode](images/logo.png)
 
+![QA Mode](images/welcome.png)
+
+
 Welcome to the Querious GitHub repository! Querious is a powerful tool designed for logfile analysis, summary generation, and interactive chatting with logs. Below, you'll find a comprehensive guide to each of its key functionalities. For more technical details, please refer to one of the folders above and read their respective READMEs.
 
-![QA Mode](images/welcome.png)
 
 
 ## 1. QA Mode
