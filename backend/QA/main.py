@@ -244,6 +244,16 @@ class LogQA:
         else:
             return generate_claude(prompt), ids
 
+    def reduce_resolution(self, log_jsons, step_size):
+        """
+        Reduces the resolution of the log file by a factor of step_size.
+        Args:
+            log_jsons [list]: list of log lines
+            step_size [int]: step size to use for reducing the resolution
+        """
+        reduced_lines = [line for i, line in enumerate(log_jsons) if i % step_size == 0]
+        return reduced_lines
+
     def generate_static_summary(self):
         ...
 
