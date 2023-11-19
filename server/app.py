@@ -108,7 +108,9 @@ async def query(request: Request):
                     "timestamp": generate_timestamp(),
                     "type": "reponse",
                     "subtype": "summary",
-                    "content": answer
+                    "content": {
+                        "answer": answer
+                    }
                 }
                 return result
             else:
