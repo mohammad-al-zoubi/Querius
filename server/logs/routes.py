@@ -8,14 +8,12 @@ from server.helpers.uuid_utils import is_valid_uuid
 router = APIRouter()
 
 
-@router.options("/all")
 @router.get("/all", tags=["logs"])
 def get_all_logs(organization: str = Depends(get_current_organization)):
     db_helper = DBHelper()
     return db_helper.get_log_list(organization)
 
 
-@router.options("/{log_uuid}")
 @router.get("/{log_uuid}", tags=["logs"])
 def get_log(log_uuid: str, organization: str = Depends(get_current_organization)):
     if not is_valid_uuid(log_uuid):
