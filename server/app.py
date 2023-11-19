@@ -104,8 +104,6 @@ async def query(request: Request):
     else:
         raise HTTPException(status_code=400, detail="Missing type field in JSON payload.")
 
-    return dummy_answer()
-
 
 @app.get("/", tags=["root"])
 def root():
