@@ -257,10 +257,9 @@ class LogQA:
     def generate_static_summary(self):
         ...
 
-
-if __name__ == '__main__':
+if __name__=='__main__':
     log = LogQA()
-    path = r"/home/ubuntu/Querius/backend/QA/logs/final_log.out"
+    path = r"/home/leo/Desktop/2/Querius/backend/QA/logs/test_log2.out"
     log.preprocess_logfile(path)
     # log.set_session_parameters(path)
     # print(log.get_log_line_by_id(1000))
