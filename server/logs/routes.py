@@ -4,6 +4,7 @@ from starlette import status
 from server.helpers.auth_utils import get_current_organization
 from .db_helper import DBHelper
 from server.helpers.uuid_utils import is_valid_uuid
+from server.query.routes import set_session_parameters
 
 router = APIRouter()
 
@@ -21,6 +22,7 @@ def get_log(log_uuid: str, organization: str = Depends(get_current_organization)
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="The id provided is not valid",
         )
+    set_session_parameters(log_uuid)
     db_helper = DBHelper()
     log = db_helper.get_log(organization, log_uuid)
     return log
