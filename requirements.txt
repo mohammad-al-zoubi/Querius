@@ -10,7 +10,6 @@ pyjwt
 uvicorn
 requests
 bcrypt
-yaml
 tqdm
 python-dotenv
 openai
