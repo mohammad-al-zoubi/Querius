@@ -75,7 +75,9 @@ async def query(request: Request):
                     "timestamp": generate_timestamp(),
                     "type": "response",
                     "subtype": "search",
-                    "content": results.get("LogLine")
+                    "content": {
+                        "lines": results.get("LogLine")
+                    }
                 }
                 return answer
 
