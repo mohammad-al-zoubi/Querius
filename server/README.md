@@ -25,7 +25,7 @@
   - `top_n_lines` (int, optional): Number of top log lines used for generating the answer (default is 1).
 - **Response:**
   - `answer` (str): The generated answer to the question.
-  - `timestamp` (str): Timestamp of the question answering request.
+  - `timestamp` (str): Timestamp of the answer request.
   - `logs` (list): List of log lines used for generating the answer.
     - `lineId` (str): Unique identifier of the log line.
     - `content` (str): Content of the log line.
