@@ -9,6 +9,10 @@ router = APIRouter()
 
 @router.post("", tags=["query"])
 def qa(query: str, logId: str, top_n_lines: int = 1):
+    """
+    Direct endpoint to the question answering functionality. Returns an answer to the given question (query),
+    returns the top_n_lines that were used by our algorithms to generate the answer as well.
+    """
     top_n_lines = max(top_n_lines, 1)
     log_qa = log_qa_dict.get(logId)
     try:

@@ -10,6 +10,7 @@ router = APIRouter()
 
 @router.post("", tags=["query"])
 def search(query: str, logId: str, top_n_lines: int = 1):
+    """Direct endpoint to the search functionality. Filters log lines according to provided parameters"""
     top_n_lines = max(top_n_lines, 1)
     try:
         log_qa = log_qa_dict.get(logId)
