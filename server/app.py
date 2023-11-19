@@ -10,19 +10,17 @@ from server.helpers.utils import *
 
 app = FastAPI()
 
-origins = ["*"]  # Allow all origins
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all methods
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-# uvicorn main:app --reload
-
-# include routes to the multiple services
+# Include routes to the multiple services
 app.include_router(auth.router, prefix="/auth")
 app.include_router(logs.router, prefix="/log")
 app.include_router(query.router, prefix="/query")
@@ -30,15 +28,21 @@ app.include_router(query.router, prefix="/query")
 
 @app.post("/query", tags=["query"])
 async def query(request: Request):
+    """
+    Central Endpoint.
+    All requests concerning summarization, question answering and log search can be done to this endpoint.
+    """
     payload = await request.json()
     operation_type = payload.get("type")
     logId = payload.get("logId")
     if logId is None:
         raise HTTPException(status_code=400, detail="Missing logId field in JSON payload.")
     if operation_type is not None:
+        # for the moment query is the only operation type available
         if operation_type == "query":
             sub_type = payload.get("subtype")
             if sub_type == "qa":
+                # Get the question
                 q = payload.get("content").get("question")
                 if q is None:
                     raise HTTPException(status_code=400, detail="Missing question field in JSON payload.")
@@ -100,9 +104,6 @@ async def query(request: Request):
                     answer, ids = summary(logId, q, lineFrom, lineTo, timeFrom, timeTo)
                 except:
                     raise HTTPException(status_code=500, detail="Something went terribly wrong.")
-                print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-                      "++++++++++++++")
-                print("RETURNED")
                 result = {
                     "logId": logId,
                     "timestamp": generate_timestamp(),
@@ -114,6 +115,7 @@ async def query(request: Request):
                 }
                 return result
             else:
+                # any subtype not matching the previous ones is not supported
                 raise HTTPException(status_code=400, detail="Unsupported operation subtype.")
         else:
             raise HTTPException(status_code=400, detail="Unsupported operation.")
