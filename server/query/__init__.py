@@ -10,5 +10,6 @@ for i, path in log_file_db.items():
         log_qa_dict[i] = lqa
     except:
         log_qa_dict[i] = None
+    break
 
 print(log_qa_dict)
