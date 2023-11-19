@@ -3,6 +3,7 @@ import { DEBUG, PATH, TOKEN }from "./Constants"
 import chatData from "./data/chatData.json"
 import { SummaryInputParams } from "@/components/summary/SummaryInput";
 import { Chat, Query, Response } from "@/entities/Chat";
+import fetch from "node-fetch"
 import { log } from "console";
 
 const sendQuery = async (
