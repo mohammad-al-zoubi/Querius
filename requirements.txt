@@ -14,3 +14,4 @@ yaml
 tqdm
 python-dotenv
 openai
+anthropic
