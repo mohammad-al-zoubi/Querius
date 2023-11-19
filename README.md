@@ -2,10 +2,10 @@
 
 
 [//]: # (![QA Mode]&#40;images/logo.png&#41;)
-<img src="images/logo.png" alt="Reduced Image" width="50%">
+<img src="images/logo.png" alt="Reduced Image" width="75%">
 
 [//]: # (![QA Mode]&#40;images/welcome.png&#41;)
-<img src="images/welcome.png" alt="Reduced Image" width="50%">
+<img src="images/welcome.png" alt="Reduced Image" width="75%">
 
 ## 1. Intoduction
 Welcome to the Querious GitHub repository! Querious is a powerful tool designed for logfile analysis, summary generation, and interactive chatting with logs. Below, you'll find a comprehensive guide to each of its key functionalities. For more technical details, please refer to one of the folders above and read their respective READMEs.
