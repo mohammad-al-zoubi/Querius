@@ -24,6 +24,7 @@ def set_session_parameters(file_path: str):
         log_qa.update_file_tracker()
         log_qa.set_session_parameters(file_path)
     except Exception as e:
+        print(str(e))
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Something went terribly wrong!")
 
     return {"result": "parameters set successfully"}
