@@ -250,9 +250,9 @@ class LogQA:
 
 if __name__ == '__main__':
     log = LogQA()
-    path = r"C:\Users\Mohammad.Al-zoubi\Documents\projects\Querius\backend\QA\data\test_log_1k.out"
-    # log.preprocess_logfile(path)
-    log.set_session_parameters(path)
+    path = r"C:\Users\Mohammad.Al-zoubi\Documents\projects\Querius\backend\QA\data\final_log.out"
+    log.preprocess_logfile(path)
+    # log.set_session_parameters(path)
     # print(log.get_log_line_by_id(1000))
     # log.log_search('When were the root privileges removed for user avahi?', 10)
     # log.generate_llm_answer('What is most suspicious about these logs?', 50)
@@ -263,9 +263,9 @@ if __name__ == '__main__':
     #                             end_date="Nov 11 13:42:49",
     #                             start_id=0,
     #                             end_id=500)
-    log.generate_dynamic_summary(query='What are the errors?',
-                                 start_date="Nov 08 13:42:49",
-                                 end_date="Nov 11 13:42:49",
-                                 start_id=1,
-                                 end_id=501,
-                                 model='claude')
+    # log.generate_dynamic_summary(query='What are the errors?',
+    #                              start_date="Nov 08 13:42:49",
+    #                              end_date="Nov 11 13:42:49",
+    #                              start_id=1,
+    #                              end_id=501,
+    #                              model='claude')
