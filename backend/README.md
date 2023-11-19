@@ -1,6 +1,6 @@
 # Logfiles Analysis Backend
 
-The `LogQA` class is the heart of our log analysis and designed to facilitate log file analysis and question answering using preprocessed log data. It provides methods for preprocessing log files, setting session parameters, and performing various queries on log data.
+The `LogQA` class in `backend/QA/main.py` is the heart of our log analysis and designed to facilitate log file analysis and question answering using preprocessed log data. It provides methods for preprocessing log files, setting session parameters, and performing various queries on log data.
 
 ## Initialization
 
