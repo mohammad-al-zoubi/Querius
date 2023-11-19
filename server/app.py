@@ -11,15 +11,15 @@ from server.helpers.utils import *
 
 app = FastAPI()
 
-#origins = ["*"]
+origins = ["*"]  # Allow all origins
 
-#app.add_middleware(
-#    CORSMiddleware,
-#    allow_origins=origins,
-#    allow_credentials=True,
-#    allow_methods=["*"],
-#    allow_headers=["*"],
-#)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all methods
+    allow_headers=["*"],  # Allow all headers
+)
 
 # uvicorn main:app --reload
 
