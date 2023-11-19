@@ -3,7 +3,7 @@ from fastapi import APIRouter, Form, Depends, HTTPException
 from starlette import status
 from .db_helper import DBHelper
 from .utils import *
-# file in charge of summarization of logfiles
+
 router = APIRouter()
 
 
@@ -23,7 +23,7 @@ async def login(username: str = Form(...), password: str = Form(...)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials. If you need an account, please contact your organization.",
         )
-    # Return some tokens for auth
+    # Return tokens for auth
     organization = db_helper.get_organization(username)
     expiration_time = datetime.utcnow() + timedelta(minutes=525600)
     payload = {
