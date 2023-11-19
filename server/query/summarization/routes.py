@@ -25,4 +25,5 @@ def summary(logId: str, prompt: str, lineFrom: int, lineTo: int, timeFrom: int, 
                                              start_date=timeFrom,
                                              end_date=timeTo)
     print(result)
-    return {"type": "SUMMARY", "result": f"this is your summary to this prompt: {prompt}"}
+    print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    return result
