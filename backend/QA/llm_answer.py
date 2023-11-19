@@ -40,12 +40,15 @@ def generate_claude(prompt, model=ANTHROPIC_AI_MODEL):
     )
     messeage = ''
     for i, chunk in enumerate(completion):
-        if i % 30 == 0:
-            print(chunk.completion)
-        else:
-            print(chunk.completion, end="")
-        messeage += chunk.completion
-    return completion.completion
+        try:
+            if i % 30 == 0:
+                print(chunk.completion)
+            else:
+                print(chunk.completion, end="")
+            messeage += chunk.completion
+        except:
+            pass
+    return messeage
 
 
 def generate_flan_t5(prompt):
