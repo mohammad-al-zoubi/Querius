@@ -46,7 +46,7 @@ def generate_claude(prompt, model=ANTHROPIC_AI_MODEL):
             else:
                 print(chunk.completion, end="")
             message += chunk.completion
-        except Exception as e:
+        except:
             pass
     return message
 
