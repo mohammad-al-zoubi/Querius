@@ -1,9 +1,8 @@
 import openai
 from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
 
-CHATGPT_API_KEY = "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"
-CLAUDE_API_KEY = "sk-ant-api03-nChVOejzxTLEAYvzSozIU54u9u3ymuBtIXZjU1sbifZQPvqmK63kT58r2mgav8v3o269WAuMccC3BC5dpNG_Yw" \
-                 "-9fZGGQAA"
+CHATGPT_API_KEY = ""
+CLAUDE_API_KEY = ""
 OPEN_AI_MODEL = "gpt-3.5-turbo"
 ANTHROPIC_AI_MODEL = "claude-instant-1"
 openai.api_key = CHATGPT_API_KEY
