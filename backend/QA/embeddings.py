@@ -4,7 +4,7 @@ from tqdm import tqdm
 import cohere
 import hnswlib
 
-Cohere_API_KEY = "KtTaFCmgxw5EubOB3SpJo7qGSLopUv2zf4z28G7J"
+Cohere_API_KEY = ""
 co = cohere.Client(Cohere_API_KEY)
 
 EMBEDDINGS_MODEL = "embed-multilingual-v2.0"
