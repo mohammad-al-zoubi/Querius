@@ -4,6 +4,7 @@
 [//]: # (![QA Mode]&#40;images/logo.png&#41;)
 <img src="images/logo.png" alt="Reduced Image" width="85%">
 
+
 [//]: # (![QA Mode]&#40;images/welcome.png&#41;)
 <img src="images/welcome.png" alt="Reduced Image" width="85%">
 
